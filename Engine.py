@@ -53,9 +53,7 @@ input_predictions = []
 st.sidebar.subheader('Prediction Input')
 nilai = [365.63, 1.605, 13.4, 206.54, 179.01, 2.529427526, 102.12, 0.453, 689.66, 0.97, 40.988, 3186, 2773]
 for i in input.columns:
-    c = 0
-    x = st.sidebar.number_input("Input {}".format(i), format="%f", min_value=0., value=nilai[c])
-    c = c+1
+    x = st.sidebar.number_input("Input {}".format(i), format="%f", min_value=0., value=nilai[i])
     input_predictions.append(x)
 title = {'Pressure (psi)':[input_predictions[0]], 'PI (psi/bbl)':[input_predictions[1]], 'Initial Watercut (%)':[input_predictions[2]],
         'GOR (scf/stb)':[input_predictions[3]], 'Temperature Res. (F)':[input_predictions[4]], 'ID tubing (in)':[input_predictions[5]],
