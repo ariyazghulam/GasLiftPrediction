@@ -51,7 +51,7 @@ input = df[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
         'Max CHP (Psig)', 'Gas Gravity', 'API', 'Depth of Reservoir', 'Max Depth Injection']]
 input_predictions = []
 st.sidebar.subheader('Prediction Input')
-nilai = [365.63, 1.605, 13.4, 206.54, 179.01, 2.529427526, 102.12, 0.453, 689.66, 0.97, 40.988, 3186, 2773]
+nilai = [365.63, 1.605, 13.4, 206.54, 179.01, 2.529427526, 102.12, 0.453, 689.66, 0.97, 40.988, 3186., 2773.]
 c = 0
 for i in input.columns:
     x = st.sidebar.number_input("Input {}".format(i), format="%f", min_value=0., value=nilai[c])
