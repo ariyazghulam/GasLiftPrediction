@@ -45,34 +45,6 @@ st.sidebar.subheader('Model Input Section')
 model_type = st.sidebar.selectbox('Regression Model Method', ['Linear Regression','Gradient Boosting Regressor','Ridge Regressor'])
 test_ratio = float(st.sidebar.slider('Test Data Ratio (%) ', min_value=0, max_value=100,value=40))
 
-#Clustering
-features = df.loc[:, :'Max Depth Injection']
-
-umap_2d = UMAP(n_components=2, init='random', random_state=0)
-proj_2d = umap_2d.fit_transform(features)
-
-kmeans = KMeans(n_clusters= 2)
-label = kmeans.fit_predict(proj_2d)
-df.insert(19,"label", label, False)
-filtered_label0 = proj_2d[label == 0]
-filtered_label1 = proj_2d[label == 1]
-
-chart = px.scatter(x=filtered_label0[:,0], y=filtered_label0[:,1], width=600, height=450)
-chart.add_trace(go.Scatter(x=filtered_label0[:,0],y=filtered_label0[:,1],
-                    mode='markers',
-                    name='Cluster 0'))
-chart.add_trace(go.Scatter(x=filtered_label1[:,0],y=filtered_label1[:,1],
-                    mode='markers',
-                    name='Cluster 1'))
-chart.update_layout(title={'text':'UMAP with Kmeans clustering plot',
-                            'xanchor' : 'left',
-                            'yanchor' :'top',
-                            'x' : 0})
-st.plotly_chart(chart)
-
-First_Data = df[df["label"] == 0]
-Second_Data = df[df["label"] == 1]
-
 input = df[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
         'GOR (scf/stb)', 'Temperature Res. (F)', 'ID tubing (in)',
         'FTP(Flowing Tubing Pressure) (psig)', 'Killing Fluid (psi/)',
@@ -249,31 +221,22 @@ def LinearReg(Data, Factor_Y, input_predictions):
 
 #Regressor Method
 if model_type == 'Linear Regression':
-    st.title('**First Cluster**')
+    st.title('**Result**')
     st.markdown('''
     **Max Oil Rate**
     ''')   
-    LinearReg(First_Data,'Max Oil Rate (STB/d)',input_predictions)
+    LinearReg(df,'Max Oil Rate (STB/d)',input_predictions)
     st.markdown('''
     **Injection Pressure (psig)**
     ''')   
-    LinearReg(First_Data,'Injection Pressure (psig)',input_predictions)
-    st.title('**Second Cluster**')
-    st.markdown('''
-    **Max Oil Rate**
-    ''')   
-    LinearReg(Second_Data,'Max Oil Rate (STB/d)',input_predictions)
-    st.markdown('''
-    **Injection Pressure (psig)**
-    ''')   
-    LinearReg(Second_Data,'Injection Pressure (psig)',input_predictions)
+    LinearReg(df,'Injection Pressure (psig)',input_predictions)
 
 elif model_type == 'Gradient Boosting Regressor':
-    st.title('**First Cluster**')
+    st.title('**Result**')
     st.markdown('''
     **Max Oil Rate**
     ''')   
-    x_data = First_Data[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
+    x_data = df[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
            'GOR (scf/stb)', 'Temperature Res. (F)', 'ID tubing (in)',
            'FTP(Flowing Tubing Pressure) (psig)', 'Killing Fluid (psi/)',
            'Max CHP (Psig)', 'Gas Gravity', 'API', 'Depth of Reservoir', 'Max Depth Injection']]
@@ -281,68 +244,30 @@ elif model_type == 'Gradient Boosting Regressor':
            'GOR (scf/stb)', 'Temperature Res. (F)', 'ID tubing (in)',
            'FTP(Flowing Tubing Pressure) (psig)', 'Killing Fluid (psi/)',
            'Max CHP (Psig)', 'Gas Gravity', 'API', 'Depth of Reservoir', 'Max Depth Injection']].values[0]
-    GradBoost(x_data, First_Data, 'Max Oil Rate (STB/d)',inputs)
+    GradBoost(x_data, df, 'Max Oil Rate (STB/d)',inputs)
     st.markdown('''
     **Injection Pressure (psig)**
     ''')   
-    x_data = First_Data[['Killing Fluid (psi/)', 'Max CHP (Psig)', 'API', 'Max Depth Injection']]
+    x_data = df[['Killing Fluid (psi/)', 'Max CHP (Psig)', 'API', 'Max Depth Injection']]
     inputs = inp[['Killing Fluid (psi/)', 'Max CHP (Psig)', 'API', 'Max Depth Injection']].values[0]
-    GradBoost(x_data, First_Data, 'Injection Pressure (psig)',inputs)
-    st.title('**Second Cluster**')
-    st.markdown('''
-    **Max Oil Rate**
-    ''')  
-    x_data = Second_Data[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
-            'GOR (scf/stb)', 'Gas Gravity']]
-    inputs = inp[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
-            'GOR (scf/stb)', 'Gas Gravity']].values[0]
-    GradBoost(x_data, Second_Data, 'Max Oil Rate (STB/d)',inputs)
-    st.markdown('''
-    **Injection Pressure (psig)**
-    ''')   
-    x_data = Second_Data[['Pressure (psi)',  'PI (psi/bbl)',  'Temperature Res. (F)',
-            'FTP(Flowing Tubing Pressure) (psig)', 'Killing Fluid (psi/)',
-            'Max CHP (Psig)', 'Gas Gravity','Depth of Reservoir']]
-    inputs = inp[['Pressure (psi)',  'PI (psi/bbl)',  'Temperature Res. (F)',
-            'FTP(Flowing Tubing Pressure) (psig)', 'Killing Fluid (psi/)',
-            'Max CHP (Psig)', 'Gas Gravity','Depth of Reservoir']].values[0]
-    GradBoost(x_data, Second_Data, 'Injection Pressure (psig)',inputs)
+    GradBoost(x_data, df, 'Injection Pressure (psig)',inputs)
     
 else:
-    st.title('**First Cluster**')
+    st.title('**Result**')
     st.markdown('''
     **Max Oil Rate**
     ''')   
-    x_data = First_Data[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
+    x_data = df[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
            'GOR (scf/stb)', 'Max CHP (Psig)', 'Gas Gravity']]
     inputs = inp[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
            'GOR (scf/stb)', 'Max CHP (Psig)', 'Gas Gravity']].values[0]
-    RidgeReg(x_data, First_Data, 'Max Oil Rate (STB/d)',inputs)
+    RidgeReg(x_data, df, 'Max Oil Rate (STB/d)',inputs)
     st.markdown('''
     **Injection Pressure (psig)**
     ''')   
-    x_data = First_Data[['Killing Fluid (psi/)', 'Max CHP (Psig)', 'API', 'Max Depth Injection']]
+    x_data = df[['Killing Fluid (psi/)', 'Max CHP (Psig)', 'API', 'Max Depth Injection']]
     inputs = inp[['Killing Fluid (psi/)', 'Max CHP (Psig)', 'API', 'Max Depth Injection']].values[0]
-    RidgeReg(x_data, First_Data, 'Injection Pressure (psig)',inputs)
-    st.title('**Second Cluster**')
-    st.markdown('''
-    **Max Oil Rate**
-    ''')  
-    x_data = Second_Data[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
-       'GOR (scf/stb)', 'Gas Gravity']]
-    inputs = inp[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
-       'GOR (scf/stb)', 'Gas Gravity']].values[0]
-    RidgeReg(x_data, Second_Data, 'Max Oil Rate (STB/d)',inputs)
-    st.markdown('''
-    **Injection Pressure (psig)**
-    ''')   
-    x_data = Second_Data[['Pressure (psi)',  'PI (psi/bbl)',  'Temperature Res. (F)',
-       'FTP(Flowing Tubing Pressure) (psig)', 'Killing Fluid (psi/)',
-       'Max CHP (Psig)', 'Gas Gravity','Depth of Reservoir']]
-    inputs = inp[['Pressure (psi)',  'PI (psi/bbl)',  'Temperature Res. (F)',
-       'FTP(Flowing Tubing Pressure) (psig)', 'Killing Fluid (psi/)',
-       'Max CHP (Psig)', 'Gas Gravity','Depth of Reservoir']].values[0]
-    RidgeReg(x_data, Second_Data, 'Injection Pressure (psig)',inputs)
+    RidgeReg(x_data, df, 'Injection Pressure (psig)',inputs)
 
 check_data = st.checkbox('Display Input Dataset')
 
