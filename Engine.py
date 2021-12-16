@@ -45,27 +45,6 @@ st.sidebar.subheader('Model Input Section')
 model_type = st.sidebar.selectbox('Regression Model Method', ['Linear Regression','Gradient Boosting Regressor','Ridge Regressor'])
 test_ratio = float(st.sidebar.slider('Test Data Ratio (%) ', min_value=0, max_value=100,value=40))
 
-#Clustering
-features = df.loc[:, :'Max Depth Injection']
-
-umap_2d = UMAP(n_components=2, init='random', random_state=0)
-proj_2d = umap_2d.fit_transform(features)
-
-kmeans = KMeans(n_clusters= 1)
-label = kmeans.fit_predict(proj_2d)
-filtered_label0 = proj_2d[label == 0]
-
-chart = px.scatter(x=filtered_label0[:,0], y=filtered_label0[:,1], width=600, height=450)
-chart.add_trace(go.Scatter(x=filtered_label0[:,0],y=filtered_label0[:,1],
-                    mode='markers',
-                    name='Cluster 0'))
-
-chart.update_layout(title={'text':'UMAP with Kmeans clustering plot',
-                            'xanchor' : 'left',
-                            'yanchor' :'top',
-                            'x' : 0})
-st.plotly_chart(chart)
-
 input = df[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
         'GOR (scf/stb)', 'Temperature Res. (F)', 'ID tubing (in)',
         'FTP(Flowing Tubing Pressure) (psig)', 'Killing Fluid (psi/)',
