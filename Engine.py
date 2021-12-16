@@ -42,7 +42,7 @@ else:
 st.sidebar.write("*Note: sample data is generated from two gas lift well actual data and simulated using prosper")
 
 st.sidebar.subheader('Model Input Section')
-model_type = st.sidebar.selectbox('Regression Model Method', ['Linear Regression','Gradient Boosting Regressor','Ridge Regressor'], value='Linear Regression')
+model_type = st.sidebar.selectbox('Regression Model Method', ['Linear Regression','Gradient Boosting Regressor','Ridge Regressor'])
 test_ratio = float(st.sidebar.slider('Test Data Ratio (%) ', min_value=0, max_value=100,value=40))
 
 input = df[['Pressure (psi)', 'PI (psi/bbl)', 'Initial Watercut (%)',
